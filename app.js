@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
+const statuses = require('./errors/statuses');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -21,4 +22,7 @@ app.use((req, res, next) => {
 
 app.use('/users', usersRoutes);
 app.use('/cards', cardsRoutes);
+app.use('*', (req, res) => {
+  res.status(404).send({ message: 'Карточка или пользователь не найдены' });
+});
 app.listen(PORT);

@@ -33,11 +33,14 @@ const getUsers = (req, res) => {
 const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
+    .orFail(() => new Error('NOT_FOUND'))
     .then((user) => {
       res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
+        res.status(NOT_FOUND).send({ message: 'Карточка или пользователь не найдены' });
+      } else if (err.message === 'NOT_FOUND') {
         res.status(NOT_FOUND).send({ message: 'Карточка или пользователь не найдены' });
       } else {
         res.status(INTERNAL).send({ message: 'На сервере произошла ошибка' });
