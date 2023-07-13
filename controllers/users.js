@@ -9,7 +9,7 @@ const createUser = (req, res) => {
   const { name, avatar, about } = req.body;
   User.create({ name, avatar, about })
     .then((user) => {
-      res.status(200).send(user);
+      res.status(201).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -75,7 +75,7 @@ const updateAvatar = (req, res) => {
     })
     .catch((err) => {
       if ((err.name === 'ValidationError') || (err.message === 'NOT_FOUND')) {
-        res.status(NOT_FOUND).send({ message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
       } else {
         res.status(INTERNAL).send({ message: 'На сервере произошла ошибка' });
       }
