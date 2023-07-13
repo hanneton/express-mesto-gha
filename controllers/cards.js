@@ -43,8 +43,12 @@ const deleteCard = (req, res) => {
     .then((card) => {
       res.status(200).send(card);
     })
-    .catch(() => {
-      res.status(NOT_FOUND).send({ message: 'Карточка или пользователь не найдены' });
+    .catch((err) => {
+      if (err.message === 'NOT_FOUND') {
+        res.status(NOT_FOUND).send({ message: 'Карточка или пользователь не найдены' });
+      } else {
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
+      }
     });
 };
 
