@@ -38,9 +38,7 @@ const getUser = (req, res) => {
       res.status(200).send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(NOT_FOUND).send({ message: 'Карточка или пользователь не найдены' });
-      } else if (err.message === 'NOT_FOUND') {
+      if ((err.name === 'CastError') || (err.message === 'NOT_FOUND')) {
         res.status(NOT_FOUND).send({ message: 'Карточка или пользователь не найдены' });
       } else {
         res.status(INTERNAL).send({ message: 'На сервере произошла ошибка' });
@@ -74,9 +72,7 @@ const updateAvatar = (req, res) => {
       res.send(info);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(NOT_FOUND).send({ message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
-      } else if (err.message === 'NOT_FOUND') {
+      if ((err.name === 'CastError') || (err.message === 'NOT_FOUND')) {
         res.status(NOT_FOUND).send({ message: 'Карточка или пользователь не найдены' });
       } else {
         res.status(INTERNAL).send({ message: 'На сервере произошла ошибка' });
