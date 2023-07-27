@@ -1,85 +1,99 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL,
 } = require('../errors/statuses');
+const { NotFound } = require('../middlewares/not-found');
 
-const createUser = (req, res) => {
-  const { name, avatar, about } = req.body;
-  User.create({ name, avatar, about })
+const login = (req, res, next) => {
+  const { email } = req.body;
+  User.findOne({ email })
+    .select('+password')
+    .orFail(() => { throw new NotFound(); })
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        'some-secret-key',
+        { expiresIn: '7d' },
+      );
+      res.send(token);
+    })
+    .catch(next);
+};
+
+const createUser = (req, res, next) => {
+  const {
+    name,
+    avatar,
+    about,
+    email,
+    password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({
+        name,
+        avatar,
+        about,
+        email,
+        password: hash,
+      });
+    })
     .then((user) => {
       res.status(201).send(user);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
-      } else {
-        res.status(INTERNAL).send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+    .catch(next);
 };
 
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((data) => {
       res.send(data);
     })
-    .catch(() => {
-      res.status(INTERNAL).send({ message: 'На сервере произошла ошибка' });
-    });
+    .catch(next);
 };
 
-const getUser = (req, res) => {
-  const { userId } = req.params;
+const getUserByDefault = (req, res, next) => {
+  const userId = req.user._id;
   User.findById(userId)
     .orFail(() => new Error('NOT_FOUND'))
     .then((user) => {
       res.status(200).send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
-      } else if (err.message === 'NOT_FOUND') {
-        res.status(NOT_FOUND).send({ message: 'Карточка или пользователь не найдены' });
-      } else {
-        res.status(INTERNAL).send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+    .catch(next);
 };
 
-const updateUser = (req, res) => {
+const getUser = (req, res, next) => {
+  const { userId } = req.params;
+  User.findById(userId)
+    .orFail(() => { throw new NotFound(); })
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch(next);
+};
+
+const updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .orFail(() => new Error('NOT_FOUND'))
+    .orFail(() => { throw new NotFound(); })
     .then((info) => {
       res.status(200).send(info);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
-      } else if (err.message === 'NOT_FOUND') {
-        res.status(NOT_FOUND).send({ message: 'Карточка или пользователь не найдены' });
-      } else {
-        res.status(INTERNAL).send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+    .catch(next);
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .orFail(() => new Error('NOT_FOUND'))
+    .orFail(() => { throw new NotFound(); })
     .then((info) => {
       res.send(info);
     })
-    .catch((err) => {
-      if ((err.name === 'ValidationError') || (err.message === 'NOT_FOUND')) {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
-      } else {
-        res.status(INTERNAL).send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+    .catch(next);
 };
 
 module.exports = {
@@ -88,4 +102,6 @@ module.exports = {
   getUser,
   updateUser,
   updateAvatar,
+  login,
+  getUserByDefault,
 };
