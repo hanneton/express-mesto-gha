@@ -1,4 +1,4 @@
-const { INTERNAL } = require('../errors/statuses');
+const { INTERNAL } = require('../utils/error-statuses');
 
 class Internal extends Error {
   constructor(message) {
