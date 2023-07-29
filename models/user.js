@@ -14,7 +14,7 @@ const userScheme = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => /^https?:\/\/(www\.)?[a-z0-9\-]+\.[a-z]+\/?[\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]*$/i.test(v),
+      validator: (v) => /^https?:\/\/(www\.)?[a-z0-9-]+\.[a-z]+\/?[-._~:/?#[]@!$&'()\*\+,;=]*$/i.test(v),
     },
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },

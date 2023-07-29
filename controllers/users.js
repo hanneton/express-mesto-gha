@@ -1,11 +1,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  INTERNAL,
-} = require('../errors/statuses');
+// const {
+//   BAD_REQUEST,
+//   NOT_FOUND,
+//   INTERNAL,
+// } = require('../errors/statuses');
 const { NotFound } = require('../middlewares/not-found');
 
 const login = (req, res, next) => {

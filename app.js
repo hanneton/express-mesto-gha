@@ -1,14 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
-const { errors } = require('celebrate');
-const { BadRequest } = require('./middlewares/bad-request');
-const { Internal } = require('./middlewares/internal');
-const { notFound } = require('./middlewares/not-found');
+// const { BadRequest } = require('./middlewares/bad-request');
+// const { Internal } = require('./middlewares/internal');
+// const { notFound } = require('./middlewares/not-found');
 const {
   BAD_REQUEST,
   NOT_FOUND,
@@ -36,7 +36,7 @@ app.use('*', (req, res) => {
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   switch (err.name) {
     case 'CastError':
       res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });

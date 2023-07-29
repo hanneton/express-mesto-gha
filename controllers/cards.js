@@ -1,9 +1,9 @@
 const Card = require('../models/card');
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  INTERNAL,
-} = require('../errors/statuses');
+// const {
+//   BAD_REQUEST,
+//   NOT_FOUND,
+//   INTERNAL,
+// } = require('../errors/statuses');
 const { NotFound } = require('../middlewares/not-found');
 
 const createCard = (req, res, next) => {
