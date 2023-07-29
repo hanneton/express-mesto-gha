@@ -7,6 +7,7 @@ const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { regex } = require('./utils/regex-pattern');
 
 // const { BadRequest } = require('./middlewares/bad-request');
 // const { Internal } = require('./middlewares/internal');
@@ -15,7 +16,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL,
-} = require('./errors/statuses');
+} = require('./utils/error-statuses');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -29,8 +30,8 @@ app.post('/signin', celebrate(
   {
     body: {
       email: Joi.string().required().email(),
-      password: Joi.string().required(),
-      avatar: Joi.string().required(),
+      password: Joi.string().required().regex(),
+      avatar: Joi.string().required().regex(regex),
       name: Joi.string().required().min(2).max(30),
       about: Joi.string().required().min(2).max(30),
     },
@@ -40,7 +41,7 @@ app.post('/signup', celebrate(
   {
     body: {
       email: Joi.string().required().email(),
-      password: Joi.string().required(),
+      password: Joi.string().required().regex(regex),
       avatar: Joi.string().required(),
       name: Joi.string().required().min(2).max(30),
       about: Joi.string().required().min(2).max(30),
