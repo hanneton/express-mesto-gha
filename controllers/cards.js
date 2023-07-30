@@ -4,7 +4,7 @@ const Card = require('../models/card');
 //   NOT_FOUND,
 //   INTERNAL,
 // } = require('../errors/statuses');
-const { NotFound } = require('../middlewares/not-found');
+const { NotFoundErr } = require('../middlewares/notFoundErr');
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -29,7 +29,7 @@ const deleteCard = (req, res, next) => {
   Card.deleteOne({ _id: cardId, owner: req.user._id })
     .then((card) => {
       if (card.deletedCount === 0) {
-        throw new NotFound();
+        throw new NotFoundErr();
       }
       return card;
     })
@@ -47,7 +47,7 @@ const likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFound();
+        throw new NotFoundErr();
       }
       return card;
     })
@@ -64,7 +64,7 @@ const unlikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFound();
+        throw new NotFoundErr();
       }
       return card;
     })

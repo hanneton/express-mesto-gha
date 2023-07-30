@@ -1,6 +1,6 @@
 const { NOT_FOUND } = require('../utils/error-statuses');
 
-class NotFound extends Error {
+class NotFoundErr extends Error {
   constructor(message) {
     super(message);
     this.statusCode = NOT_FOUND;
@@ -8,4 +8,4 @@ class NotFound extends Error {
   }
 }
 
-module.exports = { NotFound };
+module.exports = { NotFoundErr };

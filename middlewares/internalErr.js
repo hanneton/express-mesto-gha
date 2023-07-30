@@ -1,10 +1,10 @@
 const { INTERNAL } = require('../utils/error-statuses');
 
-class Internal extends Error {
+class InternalErr extends Error {
   constructor(message) {
     super(message);
     this.statusCode = INTERNAL;
   }
 }
 
-module.exports = Internal;
+module.exports = InternalErr;

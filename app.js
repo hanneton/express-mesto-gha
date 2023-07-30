@@ -16,6 +16,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL,
+  CONFLICT,
 } = require('./utils/error-statuses');
 
 const { PORT = 3000 } = process.env;
@@ -61,6 +62,9 @@ app.use(errors());
 
 app.use((err, req, res) => {
   switch (err.name) {
+    case 'ConflictError':
+      res.status(CONFLICT).send({ message: 'Такой пользователь уже зарегистрирован' });
+      break;
     case 'CastError':
       res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
       break;
