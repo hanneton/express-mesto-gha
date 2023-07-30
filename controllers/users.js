@@ -20,7 +20,7 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-const createUser = (req, res, next) => {
+const createUser = (req, res) => {
   const {
     name,
     avatar,
