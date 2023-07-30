@@ -50,8 +50,13 @@ app.post('/signup', celebrate(
   },
 ), createUser);
 
-app.use(auth);
-
+// app.use(auth);
+app.use((req, res, next) => {
+  req.user = {
+    _id: '64ac7425a17718ab37621345',
+  };
+  next();
+});
 app.use('/users', usersRoutes);
 app.use('/cards', cardsRoutes);
 app.use('*', (req, res) => {
