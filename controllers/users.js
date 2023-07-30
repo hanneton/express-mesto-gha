@@ -40,10 +40,10 @@ const createUser = (req, res, next) => {
         about,
         email,
         password: hash,
-      });
-    })
-    .then((user) => {
-      res.status(201).send({ email: user.email });
+      })
+        .then((user) => {
+          res.status(201).send(user);
+        });
     })
     .catch(next);
 };
