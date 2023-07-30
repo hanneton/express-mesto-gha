@@ -6,7 +6,7 @@ const { celebrate, Joi } = require('celebrate');
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { createUser, login } = require('./controllers/users');
-const auth = require('./middlewares/auth');
+// const auth = require('./middlewares/auth');
 const { regex } = require('./utils/regex-pattern');
 
 // const { BadRequest } = require('./middlewares/bad-request');
