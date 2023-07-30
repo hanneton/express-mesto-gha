@@ -42,7 +42,12 @@ const createUser = (req, res, next) => {
         password: hash,
       })
         .then((user) => {
-          res.status(201).send(user);
+          res.status(201).send({
+            name: user.name,
+            about: user.about,
+            avatar: user.about,
+            email: user.email,
+          });
         });
     })
     .catch(next);
