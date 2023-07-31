@@ -1,10 +1,6 @@
 const Card = require('../models/card');
-// const {
-//   BAD_REQUEST,
-//   NOT_FOUND,
-//   INTERNAL,
-// } = require('../errors/statuses');
 const { NotFoundErr } = require('../middlewares/notFoundErr');
+const { ForbiddenErr } = require('../middlewares/forbiddenErr');
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -26,15 +22,18 @@ const getCards = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.deleteOne({ _id: cardId, owner: req.user._id })
-    .then((card) => {
-      if (card.deletedCount === 0) {
-        throw new NotFoundErr();
-      }
-      return card;
-    })
-    .then((card) => {
-      res.status(200).send(card);
+  Card.findById({ _id: cardId })
+    .orFail(new NotFoundErr())
+    .then(() => {
+      Card.deleteOne({ _id: cardId, owner: req.user._id })
+        .then((data) => {
+          if (data.deletedCount === 0) {
+            throw new ForbiddenErr();
+          } else {
+            res.status(200).send({ message: 'Карточка удалена' });
+          }
+        })
+        .catch(next);
     })
     .catch(next);
 };

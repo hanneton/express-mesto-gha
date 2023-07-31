@@ -9,15 +9,13 @@ const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { regex } = require('./utils/regex-pattern');
 
-// const { BadRequest } = require('./middlewares/bad-request');
-// const { Internal } = require('./middlewares/internal');
-
 const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL,
   CONFLICT,
   UNAUTHORIZED,
+  FORBIDDEN,
 } = require('./utils/error-statuses');
 
 const { PORT = 3000 } = process.env;
@@ -52,12 +50,7 @@ app.post('/signup', celebrate(
 ), createUser);
 
 app.use(auth);
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '64ac7425a17718ab37621345',
-//   };
-//   next();
-// });
+
 app.use('/users', usersRoutes);
 app.use('/cards', cardsRoutes);
 app.use('*', (req, res) => {
@@ -68,6 +61,9 @@ app.use(errors());
 
 app.use((err, req, res, next) => {
   switch (err.name) {
+    case 'ForbiddenError':
+      res.status(FORBIDDEN).send({ message: 'Доступ к странице ограничен' });
+      break;
     case 'UnauthorizedError':
       res.status(UNAUTHORIZED).send({ message: 'Неверные логин или пароль' });
       break;
