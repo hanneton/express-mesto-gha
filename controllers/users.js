@@ -28,7 +28,7 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name,
     avatar,
@@ -42,13 +42,13 @@ const createUser = (req, res) => {
         throw new ConflictErr();
       }
       return bcrypt.hash(password, 10)
-        .then(() => {
+        .then((hash) => {
           User.create({
             name,
             avatar,
             about,
             email,
-            password,
+            password: hash,
           })
             .then((newUser) => {
               res.status(201).send({
@@ -60,9 +60,7 @@ const createUser = (req, res) => {
             });
         });
     })
-    .catch((err) => {
-      res.status(err.statusCode).send({ message: 'Такой пользователь уже зарегистрирован' });
-    });
+    .catch(next);
 };
 const getUsers = (req, res, next) => {
   User.find({})
@@ -91,16 +89,6 @@ const getUser = (req, res, next) => {
     })
     .catch(next);
 };
-
-// const updateUserByDefault = (req, res, next) => {
-//   const userId = req.user._id;
-//   const userInfo = req.body;
-//   User.findOneAndUpdate(userId, userInfo)
-//     .orFail(() => { throw new NotFoundErr(); })
-//     .then((info) => {
-//       res.status(200).send(info);
-//     });
-// };
 
 const updateUser = (req, res, next) => {
   const { name, about } = req.body;
