@@ -11,12 +11,13 @@ const { regex } = require('./utils/regex-pattern');
 
 // const { BadRequest } = require('./middlewares/bad-request');
 // const { Internal } = require('./middlewares/internal');
-// const { notFound } = require('./middlewares/not-found');
+
 const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL,
   CONFLICT,
+  UNAUTHORIZED,
 } = require('./utils/error-statuses');
 
 const { PORT = 3000 } = process.env;
@@ -65,8 +66,11 @@ app.use('*', (req, res) => {
 
 app.use(errors());
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   switch (err.name) {
+    case 'UnauthorizedError':
+      res.status(UNAUTHORIZED).send({ message: 'Неверные логин или пароль' });
+      break;
     case 'ConflictError':
       res.status(CONFLICT).send({ message: 'Такой пользователь уже зарегистрирован' });
       break;
@@ -82,6 +86,7 @@ app.use((err, req, res) => {
     default:
       res.status(INTERNAL).send({ message: 'На сервере произошла ошибка' });
   }
+  next();
 });
 
 app.listen(PORT);
