@@ -6,7 +6,7 @@ const { celebrate, Joi } = require('celebrate');
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { createUser, login } = require('./controllers/users');
-// const auth = require('./middlewares/auth');
+const auth = require('./middlewares/auth');
 const { regex } = require('./utils/regex-pattern');
 
 // const { BadRequest } = require('./middlewares/bad-request');
@@ -51,13 +51,13 @@ app.post('/signup', celebrate(
   },
 ), createUser);
 
-// app.use(auth);
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64ac7425a17718ab37621345',
-  };
-  next();
-});
+app.use(auth);
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '64ac7425a17718ab37621345',
+//   };
+//   next();
+// });
 app.use('/users', usersRoutes);
 app.use('/cards', cardsRoutes);
 app.use('*', (req, res) => {

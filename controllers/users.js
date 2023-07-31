@@ -92,6 +92,16 @@ const getUser = (req, res, next) => {
     .catch(next);
 };
 
+// const updateUserByDefault = (req, res, next) => {
+//   const userId = req.user._id;
+//   const userInfo = req.body;
+//   User.findOneAndUpdate(userId, userInfo)
+//     .orFail(() => { throw new NotFoundErr(); })
+//     .then((info) => {
+//       res.status(200).send(info);
+//     });
+// };
+
 const updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
